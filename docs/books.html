@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Books That Changed Me</title>
+  <style>
+    /* ─── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:    #0d0d12;
+      --paper:  #f5f0e8;
+      --gold:   #c8a85a;
+      --silver: #9ba8b5;
+      --accent: #7b3f6e;
+      --glow:   rgba(200,168,90,0.18);
+
+      --font-serif: 'Georgia', 'Times New Roman', serif;
+      --font-sans:  system-ui, -apple-system, sans-serif;
+
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+    }
+
+    /* ─── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 2rem;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(123,63,110,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, rgba(200,168,90,0.18) 0%, transparent 60%),
+        var(--ink);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle star field via CSS — no images */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 12%  8%,  rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 33% 22%,  rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55%  5%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 71% 18%,  rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 88% 11%,  rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 22% 45%,  rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 66% 38%,  rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 44% 72%,  rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 91% 65%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 7%  82%,  rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 50% 50%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 29% 60%, rgba(200,168,90,0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 79% 55%, rgba(200,168,90,0.4) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-eyebrow {
+      font-size: clamp(0.65rem, 1.5vw, 0.8rem);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.8;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.4rem, 7vw, 5.5rem);
+      font-weight: normal;
+      line-height: 1.1;
+      color: var(--paper);
+      text-shadow: 0 0 80px rgba(200,168,90,0.25);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: clamp(0.9rem, 2vw, 1.05rem);
+      color: var(--silver);
+      max-width: 40ch;
+      margin: 0 auto 3rem;
+      line-height: 1.7;
+    }
+
+    .scroll-cue {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gold);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      animation: bob 2.4s ease-in-out infinite;
+    }
+    .scroll-cue svg { width: 20px; height: 20px; }
+
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(6px); }
+    }
+
+    /* ─── Section shell ─────────────────────────────────────────── */
+    .books-section {
+      padding: 6rem 1.5rem;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.5;
+      margin-bottom: 5rem;
+    }
+
+    /* ─── Book Card ─────────────────────────────────────────────── */
+    .book {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: clamp(2rem, 6vw, 6rem);
+      max-width: 1100px;
+      margin: 0 auto 10rem;
+      content-visibility: auto;
+      contain-intrinsic-size: 0 600px;
+
+      /* Scroll-driven fade-in (progressive enhancement) */
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(40px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+
+    /* Alternate layout for even cards */
+    .book:nth-child(even) { direction: rtl; }
+    .book:nth-child(even) > * { direction: ltr; }
+
+    @media (max-width: 680px) {
+      .book,
+      .book:nth-child(even) {
+        grid-template-columns: 1fr;
+        direction: ltr;
+      }
+    }
+
+    /* ─── Cover ─────────────────────────────────────────────────── */
+    .book-cover-wrap {
+      position: relative;
+      display: flex;
+      justify-content: center;
+    }
+
+    .book-cover-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 30px;
+      background: radial-gradient(ellipse, rgba(200,168,90,0.3) 0%, transparent 70%);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+
+    .book-cover {
+      width: clamp(180px, 28vw, 260px);
+      aspect-ratio: 2/3;
+      border-radius: 3px 8px 8px 3px;
+      box-shadow:
+        -4px 0 0 0 rgba(0,0,0,0.5),
+        -2px 0 8px rgba(0,0,0,0.4),
+        10px 15px 40px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(255,255,255,0.04);
+      display: block;
+      transition: transform 0.5s var(--ease-out-expo), box-shadow 0.5s var(--ease-out-expo);
+      will-change: transform;
+      overflow: hidden;
+    }
+
+    .book-cover:hover {
+      transform: perspective(800px) rotateY(-8deg) scale(1.04) translateY(-4px);
+      box-shadow:
+        -4px 0 0 0 rgba(0,0,0,0.5),
+        -2px 0 8px rgba(0,0,0,0.4),
+        20px 30px 60px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .book-cover svg { display: block; width: 100%; height: 100%; }
+
+    /* ─── Text ──────────────────────────────────────────────────── */
+    .book-info { display: flex; flex-direction: column; gap: 1rem; }
+
+    .book-series {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+    }
+
+    .book-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      font-weight: normal;
+      line-height: 1.15;
+      color: var(--paper);
+    }
+
+    .book-author {
+      font-size: 0.88rem;
+      color: var(--silver);
+      letter-spacing: 0.06em;
+    }
+    .book-author strong {
+      color: var(--paper);
+      font-weight: 600;
+    }
+
+    .book-divider {
+      width: 36px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.4;
+    }
+
+    .book-quote {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+      color: var(--silver);
+      line-height: 1.75;
+      max-width: 44ch;
+      position: relative;
+      padding-left: 1.2rem;
+    }
+    .book-quote::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0.25em; bottom: 0.25em;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      opacity: 0.5;
+      border-radius: 2px;
+    }
+
+    .book-tag {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border: 1px solid rgba(200,168,90,0.25);
+      border-radius: 999px;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+      width: fit-content;
+    }
+
+    /* ─── Goodreads link ────────────────────────────────────────── */
+    .book-gr-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid rgba(200,168,90,0.2);
+      border-radius: 999px;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      opacity: 0.55;
+      width: fit-content;
+      transition: opacity 0.25s, border-color 0.25s;
+    }
+    .book-gr-link:hover {
+      opacity: 1;
+      border-color: rgba(200,168,90,0.55);
+    }
+    .book-gr-link svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+
+    /* ─── Separator ─────────────────────────────────────────────── */
+    .star-sep {
+      text-align: center;
+      color: var(--gold);
+      opacity: 0.25;
+      font-size: 1.2rem;
+      letter-spacing: 1rem;
+      margin-bottom: 10rem;
+    }
+    .star-sep:last-of-type { margin-bottom: 0; }
+
+    /* ─── Footer ────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 4rem 2rem 5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    footer p {
+      font-size: 0.75rem;
+      color: var(--silver);
+      opacity: 0.4;
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── No-animation fallback ─────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .book       { animation: none; }
+      .scroll-cue { animation: none; }
+      .book-cover { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<header class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">A personal library</p>
+    <h1 class="hero-title">Books That <em>Moved</em> Me</h1>
+    <p class="hero-sub">These books truly stand out.</p>
+    <span class="scroll-cue" aria-hidden="true">
+      scroll
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M10 4v12M4 10l6 6 6-6"/>
+      </svg>
+    </span>
+  </div>
+</header>
+
+<!-- ═══════════════════ BOOKS ═══════════════════ -->
+<main class="books-section">
+  <p class="section-label">The Collection</p>
+
+  <!-- ── 1. The Silmarillion ── -->
+  <article class="book">
+    <div class="book-cover-wrap">
+      <div class="book-cover" role="img" aria-label="The Silmarillion book cover">
+        <svg viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="sg1" cx="50%" cy="30%" r="70%">
+              <stop offset="0%"   stop-color="#1a0a2e"/>
+              <stop offset="100%" stop-color="#050510"/>
+            </radialGradient>
+            <radialGradient id="silm-glow" cx="50%" cy="38%" r="35%">
+              <stop offset="0%"   stop-color="#c8a85a" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <filter id="blur-sm"><feGaussianBlur stdDeviation="3"/></filter>
+            <filter id="blur-lg"><feGaussianBlur stdDeviation="8"/></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="260" height="390" fill="url(#sg1)"/>
+          <rect width="260" height="390" fill="url(#silm-glow)"/>
+          <!-- Stars -->
+          <g fill="white" opacity="0.6">
+            <circle cx="30"  cy="40"  r="0.8"/>
+            <circle cx="80"  cy="20"  r="1.1"/>
+            <circle cx="140" cy="55"  r="0.7"/>
+            <circle cx="200" cy="30"  r="0.9"/>
+            <circle cx="230" cy="70"  r="0.6"/>
+            <circle cx="55"  cy="90"  r="0.7"/>
+            <circle cx="170" cy="80"  r="0.8"/>
+            <circle cx="115" cy="18"  r="1.2"/>
+            <circle cx="245" cy="50"  r="0.7"/>
+          </g>
+          <!-- Two Trees (stylised) -->
+          <g transform="translate(130,200)">
+            <!-- Tree of Light (Laurelin) -->
+            <g transform="translate(-40,0)">
+              <line x1="0" y1="80" x2="0" y2="-20" stroke="#c8a85a" stroke-width="2"/>
+              <ellipse cx="-18" cy="-10" rx="22" ry="14" fill="#c8a85a" opacity="0.18" transform="rotate(-20)"/>
+              <ellipse cx="18"  cy="-30" rx="20" ry="12" fill="#c8a85a" opacity="0.18" transform="rotate(15)"/>
+              <ellipse cx="0"   cy="-45" rx="18" ry="11" fill="#c8a85a" opacity="0.22"/>
+              <!-- Glow -->
+              <ellipse cx="0" cy="-20" rx="28" ry="28" fill="#c8a85a" opacity="0.08" filter="url(#blur-sm)"/>
+            </g>
+            <!-- Tree of Silver (Telperion) -->
+            <g transform="translate(40,0)">
+              <line x1="0" y1="80" x2="0" y2="-20" stroke="#c0d8f0" stroke-width="2"/>
+              <ellipse cx="18"  cy="-10" rx="22" ry="14" fill="#c0d8f0" opacity="0.18" transform="rotate(20)"/>
+              <ellipse cx="-18" cy="-30" rx="20" ry="12" fill="#c0d8f0" opacity="0.18" transform="rotate(-15)"/>
+              <ellipse cx="0"   cy="-45" rx="18" ry="11" fill="#c0d8f0" opacity="0.22"/>
+              <ellipse cx="0" cy="-20" rx="28" ry="28" fill="#a0c8e8" opacity="0.08" filter="url(#blur-sm)"/>
+            </g>
+            <!-- Ground line -->
+            <line x1="-70" y1="80" x2="70" y2="80" stroke="rgba(200,168,90,0.3)" stroke-width="1"/>
+          </g>
+          <!-- Elvish-style decorative border -->
+          <rect x="12" y="12" width="236" height="366" fill="none" stroke="rgba(200,168,90,0.25)" stroke-width="1" rx="2"/>
+          <rect x="18" y="18" width="224" height="354" fill="none" stroke="rgba(200,168,90,0.12)" stroke-width="1" rx="1"/>
+          <!-- Silmaril gem -->
+          <polygon points="130,82 138,95 130,102 122,95" fill="#c8a85a" opacity="0.9"/>
+          <polygon points="130,82 138,95 130,92 122,95" fill="white" opacity="0.5"/>
+          <circle cx="130" cy="92" r="14" fill="none" stroke="#c8a85a" stroke-width="0.5" opacity="0.4"/>
+          <circle cx="130" cy="92" r="20" fill="#c8a85a" opacity="0.06" filter="url(#blur-sm)"/>
+          <!-- Title text -->
+          <text x="130" y="308" text-anchor="middle" font-family="Georgia,serif" font-size="17" fill="#c8a85a" letter-spacing="2">THE</text>
+          <text x="130" y="328" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#c8a85a" letter-spacing="3">SILMARILLION</text>
+          <text x="130" y="354" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#9ba8b5" letter-spacing="2">J.R.R. TOLKIEN</text>
+        </svg>
+      </div>
+    </div>
+    <div class="book-info">
+      <span class="book-series">Tolkien's Legendarium</span>
+      <h2 class="book-title">The Silmarillion</h2>
+      <p class="book-author">by <strong>J. R. R. Tolkien</strong></p>
+      <div class="book-divider"></div>
+      <p class="book-quote">"Of the Ainulindalë and the Valaquenta, the Quenta Silmarillion, the Akallabêth, and Of the Rings of Power — creation itself, sung into being before the world had words."</p>
+      <span class="book-tag">Mythology · Epic</span>
+      <a class="book-gr-link" href="https://www.goodreads.com/book/show/7332.The_Silmarillion" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        Goodreads
+      </a>
+    </div>
+  </article>
+
+  <p class="star-sep" aria-hidden="true">✦ ✦ ✦</p>
+
+  <!-- ── 2. The Mirror Visitor ── -->
+  <article class="book">
+    <div class="book-cover-wrap">
+      <div class="book-cover" role="img" aria-label="The Mirror Visitor book cover">
+        <svg viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="mv-bg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="#080c18"/>
+              <stop offset="100%" stop-color="#1a0c24"/>
+            </linearGradient>
+            <radialGradient id="mv-mirror" cx="50%" cy="42%" r="40%">
+              <stop offset="0%"   stop-color="#6a3d8a" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <filter id="mv-glow"><feGaussianBlur stdDeviation="5"/></filter>
+          </defs>
+          <rect width="260" height="390" fill="url(#mv-bg)"/>
+          <rect width="260" height="390" fill="url(#mv-mirror)"/>
+          <!-- Mirror oval -->
+          <ellipse cx="130" cy="170" rx="68" ry="95" fill="none" stroke="rgba(180,130,220,0.5)" stroke-width="1.5"/>
+          <ellipse cx="130" cy="170" rx="60" ry="86" fill="rgba(100,60,140,0.15)"/>
+          <!-- Mirror sheen -->
+          <ellipse cx="108" cy="130" rx="12" ry="28" fill="white" opacity="0.06" transform="rotate(-15,108,130)"/>
+          <!-- Reflection lines (shattered glass effect) -->
+          <g stroke="rgba(180,130,220,0.3)" stroke-width="0.8">
+            <line x1="130" y1="90"  x2="90"  y2="200"/>
+            <line x1="130" y1="90"  x2="160" y2="210"/>
+            <line x1="90"  y1="200" x2="160" y2="210"/>
+            <line x1="130" y1="90"  x2="75"  y2="155"/>
+            <line x1="130" y1="90"  x2="185" y2="165"/>
+            <line x1="130" y1="240" x2="90"  y2="200"/>
+            <line x1="130" y1="240" x2="160" y2="210"/>
+          </g>
+          <!-- Floating sparkles -->
+          <g fill="rgba(200,168,90,0.7)">
+            <circle cx="70"  cy="120" r="1.2"/>
+            <circle cx="190" cy="100" r="0.9"/>
+            <circle cx="55"  cy="230" r="1.0"/>
+            <circle cx="205" cy="250" r="1.1"/>
+            <circle cx="130" cy="310" r="0.8"/>
+          </g>
+          <!-- Decorative frame -->
+          <rect x="14" y="14" width="232" height="362" fill="none" stroke="rgba(140,80,180,0.3)" stroke-width="1" rx="2"/>
+          <!-- Title -->
+          <text x="130" y="298" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#c8a0e8" letter-spacing="2">THE MIRROR VISITOR</text>
+          <text x="130" y="315" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="#c8a85a" letter-spacing="1">A WINTER'S PROMISE · SERIES</text>
+          <text x="130" y="354" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="#9ba8b5" letter-spacing="2">CHRISTELLE DABOS</text>
+        </svg>
+      </div>
+    </div>
+    <div class="book-info">
+      <span class="book-series">La Passe-Miroir · 4-volume series</span>
+      <h2 class="book-title">The Mirror Visitor</h2>
+      <p class="book-author">by <strong>Christelle Dabos</strong></p>
+      <div class="book-divider"></div>
+      <p class="book-quote">"Arcs suspended between broken worlds, where mirrors lie and the past breathes through cracks in the present — a fairy-tale that refuses to stay a fairy-tale."</p>
+      <span class="book-tag">Fantasy · Romance · Mystery</span>
+      <a class="book-gr-link" href="https://www.goodreads.com/series/220504-la-passe-miroir" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        Goodreads
+      </a>
+    </div>
+  </article>
+
+  <p class="star-sep" aria-hidden="true">✦ ✦ ✦</p>
+
+  <!-- ── 3. We ── -->
+  <article class="book">
+    <div class="book-cover-wrap">
+      <div class="book-cover" role="img" aria-label="We by Zamyatin book cover">
+        <svg viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="we-bg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%"   stop-color="#0c1520"/>
+              <stop offset="100%" stop-color="#1a1005"/>
+            </linearGradient>
+            <linearGradient id="we-grid" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%"   stop-color="rgba(180,200,220,0.12)"/>
+              <stop offset="100%" stop-color="rgba(180,200,220,0.03)"/>
+            </linearGradient>
+          </defs>
+          <rect width="260" height="390" fill="url(#we-bg)"/>
+          <!-- Glass-city grid -->
+          <g stroke="rgba(160,200,230,0.15)" stroke-width="0.8" fill="none">
+            <!-- Vertical lines -->
+            <line x1="26"  y1="0" x2="26"  y2="390"/>
+            <line x1="52"  y1="0" x2="52"  y2="390"/>
+            <line x1="78"  y1="0" x2="78"  y2="390"/>
+            <line x1="104" y1="0" x2="104" y2="390"/>
+            <line x1="130" y1="0" x2="130" y2="390"/>
+            <line x1="156" y1="0" x2="156" y2="390"/>
+            <line x1="182" y1="0" x2="182" y2="390"/>
+            <line x1="208" y1="0" x2="208" y2="390"/>
+            <line x1="234" y1="0" x2="234" y2="390"/>
+            <!-- Horizontal lines -->
+            <line x1="0" y1="39"  x2="260" y2="39"/>
+            <line x1="0" y1="78"  x2="260" y2="78"/>
+            <line x1="0" y1="117" x2="260" y2="117"/>
+            <line x1="0" y1="156" x2="260" y2="156"/>
+            <line x1="0" y1="195" x2="260" y2="195"/>
+            <line x1="0" y1="234" x2="260" y2="234"/>
+            <line x1="0" y1="273" x2="260" y2="273"/>
+            <line x1="0" y1="312" x2="260" y2="312"/>
+            <line x1="0" y1="351" x2="260" y2="351"/>
+          </g>
+          <!-- Glass towers -->
+          <rect x="30"  y="80"  width="40" height="200" fill="rgba(160,200,230,0.06)" stroke="rgba(160,200,230,0.2)" stroke-width="0.5"/>
+          <rect x="80"  y="50"  width="40" height="230" fill="rgba(160,200,230,0.05)" stroke="rgba(160,200,230,0.2)" stroke-width="0.5"/>
+          <rect x="140" y="60"  width="40" height="220" fill="rgba(160,200,230,0.07)" stroke="rgba(160,200,230,0.2)" stroke-width="0.5"/>
+          <rect x="190" y="90"  width="40" height="190" fill="rgba(160,200,230,0.05)" stroke="rgba(160,200,230,0.2)" stroke-width="0.5"/>
+          <!-- The Wall — horizontal beam -->
+          <rect x="0" y="270" width="260" height="6" fill="rgba(100,160,200,0.25)"/>
+          <rect x="0" y="270" width="260" height="1" fill="rgba(160,210,240,0.5)"/>
+          <!-- Single standing figure (D-503) -->
+          <g transform="translate(130,220)">
+            <circle cx="0" cy="-45" r="8" fill="none" stroke="rgba(200,220,240,0.6)" stroke-width="1"/>
+            <line x1="0" y1="-37" x2="0" y2="-5" stroke="rgba(200,220,240,0.6)" stroke-width="1.5"/>
+            <line x1="-12" y1="-25" x2="12" y2="-25" stroke="rgba(200,220,240,0.6)" stroke-width="1"/>
+            <line x1="0" y1="-5" x2="-8" y2="15" stroke="rgba(200,220,240,0.6)" stroke-width="1.5"/>
+            <line x1="0" y1="-5" x2="8"  y2="15" stroke="rgba(200,220,240,0.6)" stroke-width="1.5"/>
+          </g>
+          <!-- Oppressive red eye (Benefactor) -->
+          <ellipse cx="130" cy="35" rx="20" ry="10" fill="rgba(180,30,30,0.25)" stroke="rgba(200,50,50,0.5)" stroke-width="0.8"/>
+          <circle cx="130" cy="35" r="5" fill="rgba(200,40,40,0.6)"/>
+          <circle cx="130" cy="35" r="2" fill="rgba(240,80,80,0.9)"/>
+          <!-- Big number -->
+          <text x="130" y="175" text-anchor="middle" font-family="monospace" font-size="72" fill="rgba(160,200,230,0.06)" letter-spacing="-4">WE</text>
+          <!-- Title -->
+          <text x="130" y="318" text-anchor="middle" font-family="Georgia,serif" font-size="28" fill="rgba(160,210,240,0.9)" letter-spacing="8">WE</text>
+          <text x="130" y="354" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="#9ba8b5" letter-spacing="2">YEVGENY ZAMYATIN</text>
+        </svg>
+      </div>
+    </div>
+    <div class="book-info">
+      <span class="book-series">Proto-Dystopia · 1924</span>
+      <h2 class="book-title">We</h2>
+      <p class="book-author">by <strong>Yevgeny Zamyatin</strong></p>
+      <div class="book-divider"></div>
+      <p class="book-quote">"The glass city that breathed before 1984, before Brave New World — the original scream from inside a perfectly ordered silence. D-503 never asked for a soul."</p>
+      <span class="book-tag">Dystopia · Sci-Fi · Political</span>
+      <a class="book-gr-link" href="https://www.goodreads.com/book/show/76171.We" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        Goodreads
+      </a>
+    </div>
+  </article>
+
+  <p class="star-sep" aria-hidden="true">✦ ✦ ✦</p>
+
+  <!-- ── 4. Remembrance of Earth's Past ── -->
+  <article class="book">
+    <div class="book-cover-wrap">
+      <div class="book-cover" role="img" aria-label="The Three-Body Problem book cover">
+        <svg viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="tbp-bg" cx="50%" cy="60%" r="80%">
+              <stop offset="0%"   stop-color="#12080a"/>
+              <stop offset="100%" stop-color="#060810"/>
+            </radialGradient>
+            <radialGradient id="sun1" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#ff9030" stop-opacity="0.9"/>
+              <stop offset="60%"  stop-color="#c85010" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <radialGradient id="sun2" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#ffe0a0" stop-opacity="0.85"/>
+              <stop offset="60%"  stop-color="#c8a050" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <radialGradient id="sun3" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#80a0ff" stop-opacity="0.8"/>
+              <stop offset="60%"  stop-color="#3050c8" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <filter id="glow3"><feGaussianBlur stdDeviation="6"/></filter>
+          </defs>
+          <rect width="260" height="390" fill="url(#tbp-bg)"/>
+          <!-- Star field -->
+          <g fill="white">
+            <circle cx="20"  cy="30"  r="0.7" opacity="0.7"/>
+            <circle cx="55"  cy="15"  r="0.5" opacity="0.5"/>
+            <circle cx="90"  cy="45"  r="0.8" opacity="0.6"/>
+            <circle cx="170" cy="20"  r="0.6" opacity="0.7"/>
+            <circle cx="220" cy="40"  r="0.7" opacity="0.5"/>
+            <circle cx="240" cy="80"  r="0.5" opacity="0.6"/>
+            <circle cx="15"  cy="180" r="0.6" opacity="0.4"/>
+            <circle cx="245" cy="170" r="0.5" opacity="0.5"/>
+            <circle cx="50"  cy="260" r="0.7" opacity="0.4"/>
+            <circle cx="205" cy="280" r="0.6" opacity="0.4"/>
+          </g>
+          <!-- Three suns (glowing) -->
+          <!-- Sun A - orange -->
+          <circle cx="75"  cy="110" r="22" fill="url(#sun1)" filter="url(#glow3)" opacity="0.9"/>
+          <circle cx="75"  cy="110" r="13" fill="#ff9030" opacity="0.7"/>
+          <circle cx="75"  cy="110" r="7"  fill="#ffe0a0"/>
+          <!-- Sun B - white/yellow -->
+          <circle cx="185" cy="80"  r="18" fill="url(#sun2)" filter="url(#glow3)" opacity="0.9"/>
+          <circle cx="185" cy="80"  r="10" fill="#ffe8b0" opacity="0.8"/>
+          <circle cx="185" cy="80"  r="5"  fill="white"/>
+          <!-- Sun C - blue -->
+          <circle cx="130" cy="175" r="26" fill="url(#sun3)" filter="url(#glow3)" opacity="0.85"/>
+          <circle cx="130" cy="175" r="15" fill="#80a0ff" opacity="0.6"/>
+          <circle cx="130" cy="175" r="7"  fill="#c0d0ff"/>
+          <!-- Orbital path hints -->
+          <ellipse cx="120" cy="130" rx="90" ry="60" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="4 6"/>
+          <!-- Planet (Trisolaris) -->
+          <circle cx="200" cy="195" r="8" fill="#7a8898"/>
+          <circle cx="197" cy="192" r="3" fill="rgba(255,255,255,0.15)"/>
+          <!-- Orbital lines between suns -->
+          <line x1="75" y1="110" x2="185" y2="80"  stroke="rgba(255,180,80,0.12)"  stroke-width="0.8" stroke-dasharray="3 5"/>
+          <line x1="75" y1="110" x2="130" y2="175" stroke="rgba(100,140,255,0.12)" stroke-width="0.8" stroke-dasharray="3 5"/>
+          <line x1="185" y1="80" x2="130" y2="175" stroke="rgba(255,220,120,0.12)" stroke-width="0.8" stroke-dasharray="3 5"/>
+          <!-- decorative frame -->
+          <rect x="12" y="12" width="236" height="366" fill="none" stroke="rgba(100,140,200,0.2)" stroke-width="1" rx="1"/>
+          <!-- Title -->
+          <text x="130" y="292" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(180,210,255,0.85)" letter-spacing="1.5">THE THREE-BODY</text>
+          <text x="130" y="308" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="rgba(180,210,255,0.85)" letter-spacing="1.5">PROBLEM</text>
+          <text x="130" y="327" text-anchor="middle" font-family="Georgia,serif" font-size="8.5" fill="#c8a85a" letter-spacing="1">REMEMBRANCE OF EARTH'S PAST · I</text>
+          <text x="130" y="354" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="#9ba8b5" letter-spacing="2">LIU CIXIN</text>
+        </svg>
+      </div>
+    </div>
+    <div class="book-info">
+      <span class="book-series">Remembrance of Earth's Past · Trilogy</span>
+      <h2 class="book-title">The Three‑Body Problem</h2>
+      <p class="book-author">by <strong>Liu Cixin</strong></p>
+      <div class="book-divider"></div>
+      <p class="book-quote">"Three suns. No stable orbit. A civilisation that dehydrates and rolls itself up waiting for a habitable era — and a physicist who dares to reply to the stars."</p>
+      <span class="book-tag">Hard Sci-Fi · First Contact · Epic</span>
+      <a class="book-gr-link" href="https://www.goodreads.com/series/189931-remembrance-of-earth-s-past" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        Goodreads
+      </a>
+    </div>
+  </article>
+
+  <p class="star-sep" aria-hidden="true">✦ ✦ ✦</p>
+
+  <!-- ── 5. Chronicle of the Fallers ── -->
+  <article class="book">
+    <div class="book-cover-wrap">
+      <div class="book-cover" role="img" aria-label="Chronicle of the Fallers book cover">
+        <svg viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="cf-bg" cx="50%" cy="40%" r="80%">
+              <stop offset="0%"   stop-color="#0d1a10"/>
+              <stop offset="100%" stop-color="#060c08"/>
+            </radialGradient>
+            <radialGradient id="cf-nebula" cx="50%" cy="35%" r="55%">
+              <stop offset="0%"   stop-color="#1a4d2e" stop-opacity="0.6"/>
+              <stop offset="60%"  stop-color="#0a3020" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <radialGradient id="cf-planet" cx="38%" cy="35%" r="60%">
+              <stop offset="0%"   stop-color="#2a6640"/>
+              <stop offset="55%"  stop-color="#1a4a2c"/>
+              <stop offset="100%" stop-color="#0e2e18"/>
+            </radialGradient>
+            <radialGradient id="cf-void" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#000008" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <filter id="cf-glow"><feGaussianBlur stdDeviation="5"/></filter>
+            <filter id="cf-glow-sm"><feGaussianBlur stdDeviation="2.5"/></filter>
+            <clipPath id="cf-planet-clip">
+              <circle cx="130" cy="148" r="72"/>
+            </clipPath>
+          </defs>
+          <!-- Background -->
+          <rect width="260" height="390" fill="url(#cf-bg)"/>
+          <rect width="260" height="390" fill="url(#cf-nebula)"/>
+          <!-- Distant stars -->
+          <g fill="white">
+            <circle cx="18"  cy="25"  r="0.7" opacity="0.6"/>
+            <circle cx="52"  cy="14"  r="0.5" opacity="0.5"/>
+            <circle cx="95"  cy="38"  r="0.8" opacity="0.7"/>
+            <circle cx="160" cy="18"  r="0.6" opacity="0.6"/>
+            <circle cx="210" cy="42"  r="0.7" opacity="0.5"/>
+            <circle cx="238" cy="22"  r="0.5" opacity="0.6"/>
+            <circle cx="242" cy="75"  r="0.6" opacity="0.4"/>
+            <circle cx="12"  cy="90"  r="0.5" opacity="0.5"/>
+            <circle cx="35"  cy="170" r="0.6" opacity="0.3"/>
+            <circle cx="228" cy="185" r="0.5" opacity="0.4"/>
+            <circle cx="248" cy="230" r="0.7" opacity="0.35"/>
+            <circle cx="22"  cy="270" r="0.5" opacity="0.3"/>
+          </g>
+          <!-- The Void — dark consuming sphere -->
+          <circle cx="130" cy="148" r="86" fill="url(#cf-void)" filter="url(#cf-glow)" opacity="0.7"/>
+          <!-- Planet Bienvenido -->
+          <circle cx="130" cy="148" r="72" fill="url(#cf-planet)"/>
+          <!-- Continent blobs -->
+          <g clip-path="url(#cf-planet-clip)" opacity="0.45" fill="#4a9660">
+            <ellipse cx="110" cy="130" rx="32" ry="20" transform="rotate(-15,110,130)"/>
+            <ellipse cx="155" cy="115" rx="18" ry="25" transform="rotate(20,155,115)"/>
+            <ellipse cx="100" cy="165" rx="22" ry="14" transform="rotate(8,100,165)"/>
+            <ellipse cx="152" cy="158" rx="14" ry="18" transform="rotate(-10,152,158)"/>
+          </g>
+          <!-- Ocean surface & atmosphere -->
+          <circle cx="130" cy="148" r="72" fill="none" stroke="rgba(80,160,120,0.25)" stroke-width="1"/>
+          <circle cx="130" cy="148" r="74" fill="none" stroke="rgba(80,200,120,0.35)" stroke-width="3" filter="url(#cf-glow-sm)"/>
+          <!-- Void boundary ring -->
+          <circle cx="130" cy="148" r="88" fill="none" stroke="rgba(40,100,60,0.5)" stroke-width="1.2"/>
+          <circle cx="130" cy="148" r="92" fill="none" stroke="rgba(40,100,60,0.2)" stroke-width="2" stroke-dasharray="6 8"/>
+          <!-- Fallers descending -->
+          <g opacity="0.55" fill="rgba(180,255,180,0.6)">
+            <ellipse cx="82"  cy="72"  rx="3.5" ry="6"   transform="rotate(15,82,72)"/>
+            <ellipse cx="178" cy="60"  rx="3"   ry="5.5" transform="rotate(-10,178,60)"/>
+            <ellipse cx="55"  cy="108" rx="2.5" ry="4.5" transform="rotate(25,55,108)"/>
+            <ellipse cx="205" cy="95"  rx="3"   ry="5"   transform="rotate(-20,205,95)"/>
+            <ellipse cx="42"  cy="148" rx="2"   ry="3.5" transform="rotate(10,42,148)"/>
+            <ellipse cx="218" cy="140" rx="2.5" ry="4"   transform="rotate(-15,218,140)"/>
+          </g>
+          <!-- Faller glow trails -->
+          <g opacity="0.2" fill="rgba(160,255,160,0.5)" filter="url(#cf-glow-sm)">
+            <ellipse cx="82"  cy="65"  rx="3"   ry="10"/>
+            <ellipse cx="178" cy="53"  rx="2.5" ry="9"/>
+            <ellipse cx="55"  cy="100" rx="2"   ry="8"/>
+            <ellipse cx="205" cy="87"  rx="2.5" ry="8"/>
+          </g>
+          <!-- Frame -->
+          <rect x="12" y="12" width="236" height="366" fill="none" stroke="rgba(80,160,80,0.25)" stroke-width="1" rx="2"/>
+          <!-- Duology sub-titles -->
+          <text x="130" y="285" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="rgba(120,200,140,0.6)" letter-spacing="2">BOOK I · THE ABYSS BEYOND DREAMS</text>
+          <text x="130" y="298" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="rgba(120,200,140,0.45)" letter-spacing="2">BOOK II · NIGHT WITHOUT STARS</text>
+          <text x="130" y="316" text-anchor="middle" font-family="Georgia,serif" font-size="11.5" fill="rgba(140,220,160,0.9)" letter-spacing="1.5">CHRONICLE OF</text>
+          <text x="130" y="331" text-anchor="middle" font-family="Georgia,serif" font-size="11.5" fill="rgba(140,220,160,0.9)" letter-spacing="1.5">THE FALLERS</text>
+          <text x="130" y="354" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="#9ba8b5" letter-spacing="2">PETER F. HAMILTON</text>
+        </svg>
+      </div>
+    </div>
+    <div class="book-info">
+      <span class="book-series">Commonwealth Universe · Duology</span>
+      <h2 class="book-title">Chronicle of the Fallers</h2>
+      <p class="book-author">by <strong>Peter F. Hamilton</strong></p>
+      <div class="book-divider"></div>
+      <p class="book-quote">"A planet trapped inside a living void that devours entire stars — and the alien Fallers raining down upon it, wearing human faces. Hamilton at his most expansive and merciless."</p>
+      <span class="book-tag">Space Opera · Hard Sci-Fi</span>
+      <a class="book-gr-link" href="https://www.goodreads.com/series/133201-commonwealth-chronicle-of-the-fallers" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        Goodreads
+      </a>
+    </div>
+  </article>
+
+  <p class="star-sep" aria-hidden="true">✦ ✦ ✦</p>
+
+  <!-- ── 6. Exodus (Archimedes Engine) ── -->
+  <article class="book">
+    <div class="book-cover-wrap">
+      <div class="book-cover" role="img" aria-label="Exodus series book cover">
+        <svg viewBox="0 0 260 390" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="ex-bg" cx="50%" cy="50%" r="80%">
+              <stop offset="0%"   stop-color="#080510"/>
+              <stop offset="100%" stop-color="#020205"/>
+            </radialGradient>
+            <!-- Wormhole / portal core -->
+            <radialGradient id="ex-portal" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#e8f0ff" stop-opacity="1"/>
+              <stop offset="18%"  stop-color="#90b8ff" stop-opacity="0.9"/>
+              <stop offset="45%"  stop-color="#4060c8" stop-opacity="0.6"/>
+              <stop offset="75%"  stop-color="#180830" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <!-- Helium Sea teal accent -->
+            <radialGradient id="ex-teal" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stop-color="#00e8d0" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+            <filter id="ex-glow-lg"><feGaussianBlur stdDeviation="10"/></filter>
+            <filter id="ex-glow-md"><feGaussianBlur stdDeviation="5"/></filter>
+            <filter id="ex-glow-sm"><feGaussianBlur stdDeviation="2"/></filter>
+            <!-- Rotation for spinning rings -->
+            <clipPath id="ex-clip">
+              <rect width="260" height="390"/>
+            </clipPath>
+          </defs>
+
+          <!-- Background -->
+          <rect width="260" height="390" fill="url(#ex-bg)"/>
+
+          <!-- Star field -->
+          <g fill="white" clip-path="url(#ex-clip)">
+            <circle cx="15"  cy="20"  r="0.6" opacity="0.7"/>
+            <circle cx="48"  cy="10"  r="0.5" opacity="0.5"/>
+            <circle cx="88"  cy="32"  r="0.7" opacity="0.6"/>
+            <circle cx="155" cy="15"  r="0.5" opacity="0.7"/>
+            <circle cx="200" cy="28"  r="0.8" opacity="0.5"/>
+            <circle cx="240" cy="18"  r="0.5" opacity="0.6"/>
+            <circle cx="235" cy="68"  r="0.6" opacity="0.4"/>
+            <circle cx="10"  cy="85"  r="0.5" opacity="0.5"/>
+            <circle cx="30"  cy="160" r="0.6" opacity="0.3"/>
+            <circle cx="230" cy="175" r="0.5" opacity="0.4"/>
+            <circle cx="250" cy="240" r="0.6" opacity="0.3"/>
+            <circle cx="18"  cy="280" r="0.5" opacity="0.35"/>
+            <circle cx="242" cy="310" r="0.7" opacity="0.3"/>
+          </g>
+
+          <!-- Outer diffuse portal glow -->
+          <circle cx="130" cy="155" r="95" fill="url(#ex-portal)" filter="url(#ex-glow-lg)" opacity="0.6"/>
+          <circle cx="130" cy="155" r="55" fill="url(#ex-teal)"   filter="url(#ex-glow-md)" opacity="0.4"/>
+
+          <!-- Spinning accretion rings (ellipses at angles) -->
+          <g transform="translate(130,155)" fill="none">
+            <!-- Ring 1 — wide horizontal -->
+            <ellipse rx="90" ry="18" stroke="rgba(100,160,255,0.35)" stroke-width="1.2"/>
+            <!-- Ring 2 — tilted -->
+            <ellipse rx="80" ry="22" stroke="rgba(80,220,200,0.25)" stroke-width="1" transform="rotate(50)"/>
+            <!-- Ring 3 — steeper tilt -->
+            <ellipse rx="75" ry="16" stroke="rgba(160,120,255,0.3)" stroke-width="0.8" transform="rotate(-35)"/>
+            <!-- Ring 4 — inner -->
+            <ellipse rx="52" ry="12" stroke="rgba(200,220,255,0.4)" stroke-width="1" transform="rotate(15)"/>
+          </g>
+
+          <!-- Bright portal iris -->
+          <circle cx="130" cy="155" r="32" fill="#0a0520"/>
+          <circle cx="130" cy="155" r="30" fill="url(#ex-portal)"/>
+          <circle cx="130" cy="155" r="14" fill="#e8f4ff" opacity="0.95"/>
+          <circle cx="130" cy="155" r="8"  fill="white"/>
+          <!-- Central eye-glow -->
+          <circle cx="130" cy="155" r="40" fill="none" stroke="rgba(180,210,255,0.5)" stroke-width="1.5" filter="url(#ex-glow-sm)"/>
+          <circle cx="130" cy="155" r="55" fill="none" stroke="rgba(100,180,255,0.2)" stroke-width="1"/>
+
+          <!-- Archimedes Engine — cog-like spokes radiating from portal -->
+          <g transform="translate(130,155)" stroke="rgba(160,200,255,0.3)" stroke-width="0.8" fill="none">
+            <line x1="0" y1="-32"  x2="0"   y2="-60"/>
+            <line x1="0" y1="32"   x2="0"   y2="60"/>
+            <line x1="-32" y1="0"  x2="-60" y2="0"/>
+            <line x1="32"  y1="0"  x2="60"  y2="0"/>
+            <line x1="-22" y1="-22" x2="-44" y2="-44"/>
+            <line x1="22"  y1="-22" x2="44"  y2="-44"/>
+            <line x1="-22" y1="22"  x2="-44" y2="44"/>
+            <line x1="22"  y1="22"  x2="44"  y2="44"/>
+          </g>
+
+          <!-- Fleet of ships silhouettes (fleeing through portal) -->
+          <g fill="rgba(200,220,255,0.55)" transform="translate(130,155)">
+            <!-- Small triangle ships -->
+            <polygon points="0,-72 -3,-80 3,-80"/>
+            <polygon points="-18,-65 -21,-72 -15,-72"/>
+            <polygon points="18,-65  15,-72  21,-72"/>
+            <polygon points="-34,-50 -37,-57 -31,-57"/>
+            <polygon points="34,-50  31,-57  37,-57"/>
+          </g>
+
+          <!-- Frame -->
+          <rect x="12" y="12" width="236" height="366" fill="none" stroke="rgba(80,130,220,0.2)" stroke-width="1" rx="2"/>
+
+          <!-- Book titles -->
+          <text x="130" y="276" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="rgba(140,185,255,0.65)" letter-spacing="2">BOOK I · THE ARCHIMEDES ENGINE</text>
+          <text x="130" y="289" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="rgba(140,185,255,0.45)" letter-spacing="2">BOOK II · THE HELIUM SEA</text>
+          <text x="130" y="310" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="rgba(180,215,255,0.92)" letter-spacing="6">EXODUS</text>
+          <text x="130" y="354" text-anchor="middle" font-family="Georgia,serif" font-size="9.5" fill="#9ba8b5" letter-spacing="2">PETER F. HAMILTON</text>
+        </svg>
+      </div>
+    </div>
+    <div class="book-info">
+      <span class="book-series">Exodus · Duology</span>
+      <h2 class="book-title">Exodus</h2>
+      <p class="book-author">by <strong>Peter F. Hamilton</strong></p>
+      <div class="book-divider"></div>
+      <p class="book-quote">"The Archimedes Engine opens a door — and humanity pours through it, desperate, fractured, magnificent. Hamilton builds civilisations the way other authors build sentences: effortlessly vast."</p>
+      <span class="book-tag">Space Opera · Colonisation · Sci-Fi</span>
+      <a class="book-gr-link" href="https://www.goodreads.com/series/402677-exodus" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+        Goodreads
+      </a>
+    </div>
+  </article>
+
+</main>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <p>A few worlds worth getting lost in &nbsp;·&nbsp; built with pure HTML &amp; CSS</p>
+</footer>
+
+</body>
+</html>
